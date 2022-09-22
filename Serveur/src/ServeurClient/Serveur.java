@@ -35,7 +35,7 @@ public class Serveur {
 
                         if(command.equals("CreateFile"))
                         {
-                            CreateFile(line);
+                            CreateFile();
                         }
                         else if(command.equals("ConsultFiles"))
                         {
@@ -92,12 +92,13 @@ public class Serveur {
         String command = line.substring(protocol.length() + 1,line.length());
         return command;
     }
-    public void CreateFile(String line)
+    public void CreateFile()
     {
         System.out.println("Enter file name :");
 
         try
         {
+            String line ="";
             line = in.readUTF();
             File f = new File("Fichiers\\" + line);
 
