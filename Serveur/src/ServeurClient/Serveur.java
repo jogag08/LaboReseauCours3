@@ -2,7 +2,7 @@ package ServeurClient;
 
 import java.net.*;
 import java.io.*;
-import java.io.File;
+import java.util.Scanner;
 
 public class Serveur {
 
@@ -24,7 +24,6 @@ public class Serveur {
             in = new DataInputStream((socket.getInputStream()));
 
             String line = "";
-            String[] listFiles;
 
             while(!line.equals("Fini")){
                 try{
@@ -36,19 +35,19 @@ public class Serveur {
 
                         if(command.equals("CreateFile"))
                         {
-                            File newF = CreateFile();
+                            CreateFile(line);
                         }
                         else if(command.equals("ConsultFiles"))
                         {
-
+                            ConsultFiles();
                         }
-                        else if(command.equals("AmendFiles"))
+                        else if(command.equals("AmendFile"))
                         {
-
+                            AmendFile();
                         }
                         else if(command.equals("ShowFileInfo"))
                         {
-
+                            ShowFileInfo();
                         }
                         else
                         {
@@ -93,24 +92,18 @@ public class Serveur {
         String command = line.substring(protocol.length() + 1,line.length());
         return command;
     }
-    public File CreateFile()
+    public void CreateFile(String line)
     {
         System.out.println("Enter file name :");
-        String line = "";
 
         try
         {
             line = in.readUTF();
-            line +=".txt";
-
-            String path ="C:\\Users\\Jonathan\\Desktop\\Labo3Reseau\\LaboReseauCours3\\Serveur\\src\\/Files/" + line;
-            File f = new File(path);
-
+            File f = new File("Fichiers\\" + line);
 
             if(f.createNewFile())
             {
                 System.out.println("File created : " + f.getName());
-                return f;
             }
             else
             {
@@ -121,12 +114,63 @@ public class Serveur {
         {
             System.out.println(e);
         }
-        return null;
     }
 
     public void ConsultFiles()
     {
-
+        File f = new File("Fichiers\\");
+        File[] fList = f.listFiles();
+        String fileNames = "";
+        for(int i = 0; i < fList.length; i++)
+        {
+            fileNames = fList[i].getName();
+            System.out.println(fileNames + ", ");
+        }
     }
 
+    public void AmendFile()
+    {
+        System.out.println("Enter file name :");
+        try
+        {
+            String line ="";
+            line = in.readUTF();
+
+            FileWriter wFile = new FileWriter("Fichiers\\" + line);
+            System.out.println("Enter text :");
+            line = in.readUTF();
+            wFile.write(line);
+            wFile.close();
+
+            System.out.println("File amended");
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+    }
+
+    public void ShowFileInfo()
+    {
+        System.out.println("Enter file name :");
+        try
+        {
+            String info ="";
+
+            String line = "";
+            line = in.readUTF();
+            File f = new File("Fichiers\\" + line);
+
+            Scanner scanFile = new Scanner(f);
+            while (scanFile.hasNextLine()) {
+                info += scanFile.nextLine();
+                System.out.println(info);
+            }
+            scanFile.close();
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+    }
 }
